@@ -610,20 +610,37 @@
   // "Secrets of the JavaScript Ninja", page 83.
   // Single-quote fix from Rick Strahl's version.
   // With alterations for arbitrary delimiters.
+
+  var templateCache = {};
+  var hashString = function(str) {
+    var l = str.length,
+        h = 0;
+    while (--l) {
+      h = (str.charCodeAt(l) + (h << 6) + (h << 16) - h) % Number.MAX_VALUE;
+    }
+    return h;
+  };
+
   _.template = function(str, data) {
-    var c  = _.templateSettings;
-    var endMatch = new RegExp("'(?=[^"+c.end.substr(0, 1)+"]*"+escapeRegExp(c.end)+")","g");
-    var fn = new Function('obj',
-      'var p=[],print=function(){p.push.apply(p,arguments);};' +
-      'with(obj){p.push(\'' +
-      str.replace(/[\r\t\n]/g, " ")
-         .replace(endMatch,"\t")
-         .split("'").join("\\'")
-         .split("\t").join("'")
-         .replace(c.interpolate, "',$1,'")
-         .split(c.start).join("');")
-         .split(c.end).join("p.push('")
-         + "');}return p.join('');");
+    var hash = hashString(str);
+    var fn = templateCache[hash];
+    if (!(_.isFunction(fn) && str === fn._templateSource)) {
+      var c = _.templateSettings;
+      var endMatch = new RegExp("'(?=[^"+c.end.substr(0, 1)+"]*"+escapeRegExp(c.end)+")","g");
+      fn = new Function('obj',
+        'var p=[],print=function(){p.push.apply(p,arguments);};' +
+        'with(obj){p.push(\'' +
+        str.replace(/[\r\t\n]/g, " ")
+          .replace(endMatch,"\t")
+          .split("'").join("\\'")
+          .split("\t").join("'")
+          .replace(c.interpolate, "',$1,'")
+          .split(c.start).join("');")
+          .split(c.end).join("p.push('")
+        + "');}return p.join('');");
+      fn._templateSource = str;
+      templateCache[hash] = fn;
+    }
     return data ? fn(data) : fn;
   };
 
