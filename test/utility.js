@@ -25,8 +25,12 @@ $(document).ready(function() {
   });
 
   test("utility: uniqueId", function() {
-    var ids = [], i = 0;
-    while(i++ < 100) ids.push(_.uniqueId());
+    var ids = [];
+    _.times(100, function(){ ids.push(_.uniqueId()); });
+    equals(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
+
+    ids = [];
+    _.times(100, function(){ ids.push(_.uniqueId("", true)); });
     equals(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
 
