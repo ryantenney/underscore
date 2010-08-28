@@ -1026,14 +1026,18 @@ _("fabio").capitalize();
 </pre>
 
       <p id="uniqueId">
-        <b class="header">uniqueId</b><code>_.uniqueId([prefix])</code>
+        <b class="header">uniqueId</b><code>_.uniqueId([prefix, [moreUnique]])</code>
         <br />
         Generate a globally-unique id for client-side models or DOM elements
         that need one. If <b>prefix</b> is passed, the id will be appended to it.
+        If <b>moreUnique</b> is truthy, a more unique id will be generated from
+        the trailing digits of a number from <tt>Math.random()</tt>
       </p>
       <pre>
 _.uniqueId('contact_');
-=&gt; 'contact_104'</pre>
+=&gt; 'contact_104'
+_.uniqueId('contact_', true);
+=&gt; 'contact_0531501192599535'</pre>
 
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [context])</code>
