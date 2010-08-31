@@ -48,15 +48,18 @@ $(document).ready(function() {
   });
 
   test("objects: isEqual", function() {
-    var moe   = {name : 'moe', lucky : [13, 27, 34]};
-    var clone = {name : 'moe', lucky : [13, 27, 34]};
+    var moe   = {name : 'moe', lucky : [13, 27, 34], age : 20};
+    var clone = {name : 'moe', lucky : [13, 27, 34], age : 20};
+    var nonstrict = {name : 'moe', lucky : [13, 27, 34], age : "20"};
     ok(moe != clone, 'basic equality between objects is false');
     ok(_.isEqual(moe, clone), 'deep equality is true');
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');
     ok(!_.isEqual(5, NaN), '5 is not equal to NaN');
+    ok(_.isEqual(moe, nonstrict, false), 'deep equality is true (non-strict compare)');
 	ok(NaN != NaN, 'NaN is not equal to NaN (native equality)');
 	ok(NaN !== NaN, 'NaN is not equal to NaN (native identity)');
-    ok(!_.isEqual(NaN, NaN), 'NaN is not equal to NaN');
+    ok(!_.isEqual(NaN, NaN, true), 'NaN is not equal to NaN (strict compare)');
+    ok(_.isEqual(NaN, NaN, false), 'NaN is equal to NaN (non-strict compare)');
     ok(_.isEqual(new Date(100), new Date(100)), 'identical dates are equal');
     ok(_.isEqual((/hello/ig), (/hello/ig)), 'identical regexes are equal');
     ok(!_.isEqual(null, [1]), 'a falsy is never equal to a truthy');
