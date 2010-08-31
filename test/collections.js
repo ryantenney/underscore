@@ -153,6 +153,15 @@ $(document).ready(function() {
     equals(index, 3, '35 should be inserted at index 3');
   });
 
+  test('collections: shuffle', function() {
+    var numbers = _.range(10);
+    var poss = _.map(numbers, function(){ return 0; });
+    _.times(100, function(){ _.each(_.shuffle(numbers), function(value, index){ poss[value] = true; }); });
+    ok(_.all(poss), "all indices of the array are feelin' the love");
+
+    equals(_.shuffle(numbers).sort().join(', '), numbers.join(', '), 'contains the same members before and after shuffle');
+  });
+
   test('collections: toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
