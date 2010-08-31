@@ -470,12 +470,15 @@
   };
 
   // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
+  _.isEqual = function(a, b, strict) {
+    if (_.isUndefined(strict)) {
+      strict = true;
+    }
     // Check object identity.
     if (a === b) return true;
     // Different types?
     var atype = typeof(a), btype = typeof(b);
-    if (atype != btype) return false;
+    if (strict && atype != btype) return false;
     // Basic equality test (watch out for coercions).
     if (a == b) return true;
     // One is falsy and the other truthy.
@@ -485,7 +488,7 @@
     // Check dates' integer values.
     if (_.isDate(a) && _.isDate(b)) return a.getTime() === b.getTime();
     // Both are NaN?
-    if (_.isNaN(a) && _.isNaN(b)) return false;
+    if (_.isNaN(a) && _.isNaN(b)) return !strict;
     // Compare regular expressions.
     if (_.isRegExp(a) && _.isRegExp(b))
       return a.source     === b.source &&
@@ -501,7 +504,7 @@
     // Different object sizes?
     if (aKeys.length != bKeys.length) return false;
     // Recursive comparison of contents.
-    for (var key in a) if (!(key in b) || !_.isEqual(a[key], b[key])) return false;
+    for (var key in a) if (!(key in b) || !_.isEqual(a[key], b[key], strict)) return false;
     return true;
   };
 
