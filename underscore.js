@@ -336,6 +336,14 @@
     });
   };
 
+  // Produce an array that contains every item contained in array a
+  // but not in array b.
+  _.complement = function(a, b) {
+    return _.select(a, function(item) {
+      return ! _.include(b, item);
+    });
+  };
+
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
   _.zip = function() {

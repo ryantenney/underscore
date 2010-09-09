@@ -71,6 +71,23 @@ $(document).ready(function() {
     equals(result.join(''), 'moe', 'works on an arguments object');
   });
 
+  test("arrays: complement", function() {
+    var beatles = ["paul", "john", "george", "ringo"],
+      zeps = ["jimmy", "robert", "john paul", "john"];
+    equals(_.complement(beatles, zeps).sort().join(''),
+           ["george", "paul", "ringo"].sort().join(''),
+           "can find complement of one array with respect to another");
+    equals(_(zeps).complement(beatles).sort().join(''),
+           ["jimmy", "john paul", "robert"].sort().join(''),
+           "can find complements, OO-style");
+    var result  = (function() {
+      return _.complement(arguments, zeps).sort();
+    })("brian", "fred", "robert");
+    equals(result.sort().join(''),
+           ["brian", "fred"].sort().join(''),
+           "works on an arguments object");
+  });
+
   test('arrays: zip', function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     var stooges = _.zip(names, ages, leaders);
