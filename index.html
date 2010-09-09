@@ -140,9 +140,11 @@
     <p>
       <b>Arrays</b>
       <br />
-      <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>, <a href="#last">last</a>,
-      <a href="#compact">compact</a>, <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
-      <a href="#intersect">intersect</a>, <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
+      <span class="methods"><a href="#first">first</a>, <a href="#rest">rest</a>,
+      <a href="#last">last</a>, <a href="#compact">compact</a>,
+      <a href="#flatten">flatten</a>, <a href="#without">without</a>, <a href="#uniq">uniq</a>,
+      <a href="#intersect">intersect</a>, <a href="#complement">complement</a>,
+      <a href="#zip">zip</a>, <a href="#indexOf">indexOf</a>,
       <a href="#lastIndexOf">lastIndexOf</a>, <a href="#range">range</a></span>
     </p>
 
@@ -563,6 +565,16 @@ _.intersect([1, 2, 3], [101, 2, 1, 10], [2, 1]);
 =&gt; [1, 2]
 </pre>
 
+      <p id="complement">
+        <b class="header">complement</b><code>_.complement(a, b)</code>
+        <br />
+        Computes the list of values present in <b>a</b> but not
+        in <b>b</b>.
+      </p>
+      <pre>
+_.complement([1, 2, 3, 4, 5], [4, 5]);
+=&gt; [1, 2, 3]
+</pre>
       <p id="zip">
         <b class="header">zip</b><code>_.zip(*arrays)</code>
         <br />
