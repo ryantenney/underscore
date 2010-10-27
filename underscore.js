@@ -196,6 +196,13 @@
     return _.map(obj, function(value){ return value[key]; });
   };
 
+  // Accepts an array or object, and outputs an object indexed by the property specified by `key`.
+  _.index = function (arr, key) {
+    var obj = {};
+    each(arr, function(value){ obj[value[key]] = value; });
+    return obj;
+  };
+
   // Return the maximum element or (element-based computation).
   _.max = function(obj, iterator, context) {
     if (!iterator && _.isArray(obj)) return Math.max.apply(Math, obj);

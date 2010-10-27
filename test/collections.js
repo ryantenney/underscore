@@ -127,6 +127,11 @@ $(document).ready(function() {
     equals(_.pluck(people, 'name').join(', '), 'moe, curly', 'pulls names out of objects');
   });
 
+  test('collections: index', function() {
+    var people = [{id: "123", name : 'moe', age : 30}, {id: "432", name : 'curly', age : 50}];
+    equals(_.keys(_.index(people, 'id')).join(', '), '123, 432', 'indexes objects by specified property');
+  });
+
   test('collections: max', function() {
     equals(3, _.max([1, 2, 3]), 'can perform a regular Math.max');
 

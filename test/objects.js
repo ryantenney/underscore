@@ -13,7 +13,7 @@ $(document).ready(function() {
   test("objects: functions", function() {
     var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
     "compose", "contains", "defer", "delay", "detect", "each", "every", "extend", "filter", "find", "first",
-    "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
+    "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include", "index",
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isBoolean", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "memoize", "methods", "min", "mixin", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
