@@ -684,6 +684,20 @@
   // Add all of the Underscore functions to the wrapper object.
   _.mixin(_);
 
+  _.curry = function(pos, fn) {
+    var curried = slice.call(arguments, _.isFunction(pos) ? 1 : 2);
+    if (_.isFunction(pos)) {
+      fn = pos;
+      pos = 0;
+    }
+    return function() {
+      var args = slice.call(arguments);
+      pos = pos < 0 ? args.length + (pos+1) : pos;
+      splice.apply(args, [pos, 0].concat(curried));
+      return fn.apply(this, args);
+    };
+  };
+
   // Add all mutator Array functions to the wrapper.
   each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
