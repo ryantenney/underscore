@@ -11,14 +11,18 @@ $(document).ready(function() {
   });
 
   test("objects: functions", function() {
-    var expected = ["all", "any", "bind", "bindAll", "breakLoop", "clone", "compact",
-    "compose", "contains", "defer", "delay", "detect", "each", "every", "extend", "filter", "first",
+    var expected = ["all", "any", "bind", "bindAll", "clone", "compact",
+    "compose", "contains", "debounce", "defer", "delay", "detect", "each", "every", "extend", "filter", "find", "first",
     "flatten", "foldl", "foldr", "forEach", "functions", "head", "identity", "include",
     "indexOf", "inject", "intersect", "invoke", "isArguments", "isArray", "isBoolean", "isDate", "isElement", "isEmpty", "isEqual",
     "isFunction", "isNaN", "isNull", "isNumber", "isRegExp", "isString", "isUndefined", "keys", "last", "lastIndexOf", "map", "max",
     "memoize", "methods", "min", "mixin", "noConflict", "pluck", "range", "reduce", "reduceRight", "reject", "rest", "select",
-    "shuffle", "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "times", "toArray", "uniq",
+    "shuffle", "size", "some", "sortBy", "sortedIndex", "tail", "tap", "template", "throttle", "times", "toArray", "uniq", "unique",
     "uniqueId", "values", "without", "wrap", "zip"];
+	var actual = _.methods(_);
+	console.log(_.reject(actual, function (val) {
+		return _.contains(expected, val);
+	}));
     same(expected, _.methods(_), 'provides a sorted list of functions');
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
     ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
@@ -54,13 +58,15 @@ $(document).ready(function() {
     ok(_.isEqual(moe, clone), 'deep equality is true');
     ok(_(moe).isEqual(clone), 'OO-style deep equality works');
     ok(!_.isEqual(5, NaN), '5 is not equal to NaN');
-	ok(NaN != NaN, 'NaN is not equal to NaN (native equality)');
-	ok(NaN !== NaN, 'NaN is not equal to NaN (native identity)');
+    ok(NaN != NaN, 'NaN is not equal to NaN (native equality)');
+    ok(NaN !== NaN, 'NaN is not equal to NaN (native identity)');
     ok(!_.isEqual(NaN, NaN), 'NaN is not equal to NaN');
     ok(_.isEqual(new Date(100), new Date(100)), 'identical dates are equal');
     ok(_.isEqual((/hello/ig), (/hello/ig)), 'identical regexes are equal');
     ok(!_.isEqual(null, [1]), 'a falsy is never equal to a truthy');
-    ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'object with the same number of undefined keys are not equal');
+    ok(!_.isEqual({x: 1, y: undefined}, {x: 1, z: 2}), 'objects with the same number of undefined keys are not equal');
+    ok(!_.isEqual(_({x: 1, y: undefined}).chain(), _({x: 1, z: 2}).chain()), 'wrapped objects are not equal');
+    equals(_({x: 1, y: 2}).chain().isEqual(_({x: 1, y: 2}).chain()).value(), true, 'wrapped objects are equal');
   });
 
   test("objects: isEmpty", function() {
@@ -95,7 +101,7 @@ $(document).ready(function() {
       parent.iRegExp    = /hi/;\
       parent.iNaN       = NaN;\
       parent.iNull      = null;\
-	  parent.iBoolean   = false;\
+      parent.iBoolean   = false;\
       parent.iUndefined = undefined;\
     </script>"
   );
@@ -134,7 +140,7 @@ $(document).ready(function() {
     ok(!_.isNumber(arguments), 'the arguments object is not a number');
     ok(!_.isNumber(undefined), 'undefined is not a number');
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
-    ok(_.isNumber(NaN), 'NaN is a number');
+    ok(!_.isNumber(NaN), 'NaN is not a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
     ok(_.isNumber(iNumber), 'even from another frame');
   });
@@ -192,10 +198,23 @@ $(document).ready(function() {
     ok(!_.isUndefined(1), 'numbers are defined');
     ok(!_.isUndefined(null), 'null is defined');
     ok(!_.isUndefined(false), 'false is defined');
+    ok(!_.isUndefined(NaN), 'NaN is defined');
     ok(_.isUndefined(), 'nothing is undefined');
     ok(_.isUndefined(undefined), 'undefined is undefined');
     ok(_.isUndefined(iUndefined), 'even from another frame');
   });
+
+  if (window.ActiveXObject) {
+    test("objects: IE host objects", function() {
+      var xml = new ActiveXObject("Msxml2.DOMDocument.3.0");
+      ok(!_.isNumber(xml));
+      ok(!_.isBoolean(xml));
+      ok(!_.isNaN(xml));
+      ok(!_.isFunction(xml));
+      ok(!_.isNull(xml));
+      ok(!_.isUndefined(xml));
+    });
+  }
 
   test("objects: tap", function() {
     var intercepted = null;

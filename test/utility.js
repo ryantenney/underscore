@@ -15,15 +15,6 @@ $(document).ready(function() {
     equals(_.identity(moe), moe, 'moe is the same as his identity');
   });
 
-  test('utility: breakLoop', function() {
-    var result = null;
-    _([1,2,3,4,5,6]).each(function(num) {
-      result = num;
-      if (num == 3) _.breakLoop();
-    });
-    equals(result, 3, 'broke out of a loop');
-  });
-
   test("utility: uniqueId", function() {
     var ids = [], i = 0;
     while(i++ < 100) ids.push(_.uniqueId());
@@ -55,9 +46,25 @@ $(document).ready(function() {
     var result = basicTemplate({thing : 'This'});
     equals(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
 
-    var fancyTemplate = _.template("<ul><% for (key in people) { %><li><%= people[key] %></li><% } %></ul>");
+    var backslashTemplate = _.template("<%= thing %> is \\ridanculous");
+    equals(backslashTemplate({thing: 'This'}), "This is \\ridanculous");
+
+    var fancyTemplate = _.template("<ul><% \
+      for (key in people) { \
+    %><li><%= people[key] %></li><% } %></ul>");
     result = fancyTemplate({people : {moe : "Moe", larry : "Larry", curly : "Curly"}});
     equals(result, "<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>", 'can run arbitrary javascript in templates');
+
+    var namespaceCollisionTemplate = _.template("<%= pageCount %> <%= thumbnails[pageCount] %> <% _.each(thumbnails, function(p) { %><div class=\"thumbnail\" rel=\"<%= p %>\"></div><% }); %>");
+    result = namespaceCollisionTemplate({
+      pageCount: 3,
+      thumbnails: {
+        1: "p1-thumbnail.gif",
+        2: "p2-thumbnail.gif",
+        3: "p3-thumbnail.gif"
+      }
+    });
+    equals(result, "3 p3-thumbnail.gif <div class=\"thumbnail\" rel=\"p1-thumbnail.gif\"></div><div class=\"thumbnail\" rel=\"p2-thumbnail.gif\"></div><div class=\"thumbnail\" rel=\"p3-thumbnail.gif\"></div>");
 
     var noInterpolateTemplate = _.template("<div><p>Just some text. Hey, I know this is silly but it aids consistency.</p></div>");
     result = noInterpolateTemplate();
@@ -66,16 +73,22 @@ $(document).ready(function() {
     var quoteTemplate = _.template("It's its, not it's");
     equals(quoteTemplate({}), "It's its, not it's");
 
-    var quoteInStatementAndBody = _.template("<% if(foo == 'bar'){ %>Statement quotes and 'quotes'.<% } %>");
+    var quoteInStatementAndBody = _.template("<%\
+      if(foo == 'bar'){ \
+    %>Statement quotes and 'quotes'.<% } %>");
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');
     equals(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
 
+    if (!$.browser.msie) {
+      var fromHTML = _.template($('#template').html());
+      equals(fromHTML({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');
+    }
+
     _.templateSettings = {
-      start       : '{{',
-      end         : '}}',
-      interpolate : /\{\{=(.+?)\}\}/g
+      evaluate    : /\{\{([\s\S]+?)\}\}/g,
+      interpolate : /\{\{=([\s\S]+?)\}\}/g
     };
 
     var custom = _.template("<ul>{{ for (key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>");
@@ -89,9 +102,8 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      start       : '<?',
-      end         : '?>',
-      interpolate : /<\?=(.+?)\?>/g
+      evaluate    : /<\?([\s\S]+?)\?>/g,
+      interpolate : /<\?=([\s\S]+?)\?>/g
     };
 
     var customWithSpecialChars = _.template("<ul><? for (key in people) { ?><li><?= people[key] ?></li><? } ?></ul>");
@@ -105,8 +117,6 @@ $(document).ready(function() {
     equals(quoteInStatementAndBody({foo: "bar"}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      start       : '{{',
-      end         : '}}',
       interpolate : /\{\{(.+?)\}\}/g
     };
 

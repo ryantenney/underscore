@@ -7,10 +7,6 @@ $(document).ready(function() {
       equals(num, i + 1, 'each iterators provide value and iteration count');
     });
 
-    var answer = null;
-    _.each([1, 2, 3], function(num){ if ((answer = num) == 2) _.breakLoop(); });
-    equals(answer, 2, 'the loop broke in the middle');
-
     var answers = [];
     _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
     equals(answers.join(', '), '5, 10, 15', 'context object property accessed');
@@ -65,11 +61,20 @@ $(document).ready(function() {
 
     sum = _([1, 2, 3]).reduce(function(sum, num){ return sum + num; }, 0);
     equals(sum, 6, 'OO-style reduce');
+
+    var sum = _.reduce([1, 2, 3], function(sum, num){ return sum + num; });
+    equals(sum, 6, 'default initial value');
   });
 
   test('collections: reduceRight', function() {
-    var list = _.foldr([1, 2, 3], function(memo, num){ return memo + num; }, '');
-    equals(list, '321', 'can perform right folds');
+    var list = _.reduceRight(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    equals(list, 'bazbarfoo', 'can perform right folds');
+
+    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; }, '');
+    equals(list, 'bazbarfoo', 'aliased as "foldr"');
+
+    var list = _.foldr(["foo", "bar", "baz"], function(memo, str){ return memo + str; });
+    equals(list, 'bazbarfoo', 'default initial value');
   });
 
   test('collections: detect', function() {
@@ -111,7 +116,7 @@ $(document).ready(function() {
   test('collections: include', function() {
     ok(_.include([1,2,3], 2), 'two is in the array');
     ok(!_.include([1,3,9], 2), 'two is not in the array');
-    ok(_.contains({moe:1, larry:3, curly:9}, 3), '_.include on objects checks their values');
+    ok(_.contains({moe:1, larry:3, curly:9}, 3) === true, '_.include on objects checks their values');
     ok(_([1,2,3]).include(2), 'OO-style include');
   });
 
